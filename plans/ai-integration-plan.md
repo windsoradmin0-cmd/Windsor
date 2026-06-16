@@ -2,7 +2,7 @@
 
 ## Focus: Static HTML/CSS Site (Not React/Node)
 
-Your API key (`AQ.Ab8RN6Kzzxkr51vjs46gKzc_Xsw_xdNSxfqb9xWLiC9LWcKYew`) can add AI capabilities to your static landing page.
+Your API key (`YOUR_API_KEY_HERE`) can add AI capabilities to your static landing page.
 
 ---
 
@@ -114,7 +114,7 @@ flowchart TB
 
     subgraph AI["AI Providers"]
         GEMINI[Google Gemini<br/>Primary]
-        NEW_API[New AI API<br/>AQ.Ab8RN6...<br/>Fallback/Enhanced]
+        NEW_API[New AI API<br/>YOUR_API_KEY...<br/>Fallback/Enhanced]
     end
 
     AI_LAYER --> GEMINI
@@ -151,7 +151,7 @@ In [`bot-script.js`](js/bot-script.js:1), line 3-4:
 
 ```javascript
 const apiKey = "AIzaSyCzwz4puVfYrahJciYecD2jxKROB8ZQpY"; // Primary - Gemini
-const fallbackApiKey = "AQ.Ab8RN6Kzzxkr51vjs46gKzc_Xsw_xdNSxfqb9xWLiC9LWcKYew"; // New AI
+const fallbackApiKey = "YOUR_API_KEY_HERE"; // New AI
 ```
 
 ---
