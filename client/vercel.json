@@ -5,7 +5,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://your-windsor-api.onrender.com/api/:path*"
+      "destination": "https://windsor-api-mxxv.onrender.com/api/:path*"
     },
     {
       "source": "/admin/:path*",
@@ -13,6 +13,6 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "https://your-windsor-api.onrender.com/api"
+    "VITE_API_URL": "https://windsor-api-mxxv.onrender.com/api"
   }
 }
