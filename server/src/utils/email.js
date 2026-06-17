@@ -1,24 +1,12 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-/**
- * Create and configure nodemailer transporter
- */
-function createTransporter() {
-  return nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.GMAIL_EMAIL,
-      pass: process.env.GMAIL_APP_PASSWORD,
-    },
-  });
-}
+const resend = new Resend(process.env.RESEND_API_KEY);
+const FROM_EMAIL = process.env.FROM_EMAIL || 'Windsor Residence <onboarding@resend.dev>';
 
 /**
  * Send email notification to admin when a new inquiry is submitted
  */
 export async function sendInquiryNotificationToAdmin({ inquirerName, inquirerEmail, inquirerPhone, message, roomId }) {
-  const transporter = createTransporter();
-  
   const adminEmail = process.env.ADMIN_EMAIL || process.env.GMAIL_EMAIL;
   const subject = roomId 
     ? `🏠 New Room Inquiry from ${inquirerName}` 
@@ -26,7 +14,7 @@ export async function sendInquiryNotificationToAdmin({ inquirerName, inquirerEma
   
   const text = `
 New Inquiry Received
-===================
+=================== 
 
 Name: ${inquirerName}
 Email: ${inquirerEmail}
@@ -95,13 +83,19 @@ Received at: ${new Date().toISOString()}
   `.trim();
 
   try {
-    await transporter.sendMail({
-      from: `"Windsor Residence" <${process.env.GMAIL_EMAIL}>`,
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
       to: adminEmail,
       subject,
       text,
       html,
     });
+
+    if (error) {
+      console.error('Failed to send inquiry notification email:', error);
+      return false;
+    }
+
     console.log(`📧 Inquiry notification sent to admin: ${adminEmail}`);
     return true;
   } catch (error) {
@@ -114,15 +108,13 @@ Received at: ${new Date().toISOString()}
  * Send email reply notification to the inquirer
  */
 export async function sendReplyNotificationToInquirer({ inquirerEmail, inquirerName, inquiryId, replyMessage }) {
-  const transporter = createTransporter();
-  
   const subject = `📬 Windsor Residence: We have responded to your inquiry`;
   
   const text = `
 Hello ${inquirerName},
-===================
+=================== 
 
-We have responded to your inquiry at Windsor Residence.
+We have responded to your inquiry at Windsor Residence. 
 
 Our Reply:
 ----------
@@ -170,13 +162,19 @@ This is an automated message. Please do not reply directly to this email.
   `.trim();
 
   try {
-    await transporter.sendMail({
-      from: `"Windsor Residence" <${process.env.GMAIL_EMAIL}>`,
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
       to: inquirerEmail,
       subject,
       text,
       html,
     });
+
+    if (error) {
+      console.error('Failed to send reply notification email:', error);
+      return false;
+    }
+
     console.log(`📧 Reply notification sent to inquirer: ${inquirerEmail}`);
     return true;
   } catch (error) {
