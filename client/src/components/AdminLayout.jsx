@@ -6,12 +6,14 @@ import { useToast } from '../contexts/ToastContext'
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   const { logout, admin } = useAdminAuth()
   const { showToast } = useToast()
 
   const handleLogout = () => {
+    setShowLogoutModal(false)
     logout()
     showToast('Logged out successfully', 'success')
     navigate('/admin/login')
@@ -88,7 +90,7 @@ export default function AdminLayout() {
         {/* Bottom actions */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-neutral-800">
           <button
-            onClick={handleLogout}
+            onClick={() => setShowLogoutModal(true)}
             className="flex items-center gap-3 w-full px-4 py-3 text-neutral-300 hover:bg-neutral-800 hover:text-white rounded-lg transition-colors"
           >
             <LogOut className="w-5 h-5" />
@@ -96,6 +98,30 @@ export default function AdminLayout() {
           </button>
         </div>
       </aside>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm mx-4">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-2">Confirm Logout</h3>
+            <p className="text-neutral-600 mb-6">Are you sure you want to log out?</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="flex-1 px-4 py-2 border border-neutral-300 text-neutral-700 rounded-lg hover:bg-neutral-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main content */}
       <div className="lg:ml-64">
