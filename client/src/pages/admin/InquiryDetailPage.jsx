@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Send, Mail, Phone, Clock, MessageSquare, X, CheckCircle, Sparkles, Loader2 } from 'lucide-react'
 import api from '../../services/api'
+import { sendInquiryReplyEmail } from '../../services/email'
 import { useToast } from '../../contexts/ToastContext'
 import { formatDateTime } from '../../utils/date'
 
@@ -92,7 +93,18 @@ export default function AdminInquiryDetailPage() {
         message: reply.trim(),
       })
       if (response.data.success) {
-        showToast('Reply sent successfully', 'success')
+        // Send email notification to inquirer via EmailJS
+        const emailSent = await sendInquiryReplyEmail({
+          inquirer_email: inquiry.inquirerEmail,
+          inquirer_name: inquiry.inquirerName,
+          reply_message: reply.trim(),
+        })
+        
+        if (emailSent) {
+          showToast('Reply sent successfully', 'success')
+        } else {
+          showToast('Reply saved but email failed', 'warning')
+        }
         setReply('')
         fetchInquiry()
       }
