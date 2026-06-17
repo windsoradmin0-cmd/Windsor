@@ -14,8 +14,7 @@ import aiRoutes from './routes/ai.js';
 import analyticsRoutes from './routes/analytics.js';
 
 // Import security middleware
-import { securityHeaders, corsOptions, loginLimiter, apiLimiter } from './middleware/security.js';
-import { requireBasicAuth } from './middleware/basicAuth.js';
+import { securityHeaders, corsOptions, apiLimiter } from './middleware/security.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -39,19 +38,14 @@ app.get('/health', (req, res) => {
 });
 
 // API Routes
-// Auth routes (login, logout, refresh) - NOT protected by Basic Auth (need to be accessible)
-// But these routes have their own JWT authentication
+// Auth routes (login, logout, refresh)
 app.use('/api/admin/auth', adminAuthRoutes);
 
-// Room routes - Basic Auth will be checked per-path inside the router
-// Public /api/rooms/* - accessible to all
-// Protected /api/rooms/admin/* - requires Basic Auth
-app.use('/api/rooms', requireBasicAuth, roomRoutes);
+// Room routes - public routes accessible, admin routes protected by JWT middleware inside
+app.use('/api/rooms', roomRoutes);
 
-// Inquiry routes - same as rooms
-// Public /api/inquiries/* - accessible to all  
-// Protected /api/inquiries/admin/* - requires Basic Auth
-app.use('/api/inquiries', requireBasicAuth, inquiryRoutes);
+// Inquiry routes - public routes accessible, admin routes protected by JWT middleware inside
+app.use('/api/inquiries', inquiryRoutes);
 
 // Public routes
 app.use('/api/upload', uploadRoutes);
