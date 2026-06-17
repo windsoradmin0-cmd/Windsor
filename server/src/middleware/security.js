@@ -39,7 +39,9 @@ export const loginLimiter = rateLimit({
   standardHeaders: true, // Return rate limit info in headers
   legacyHeaders: false,
   // Skip successful logins from rate limit count
-  skipSuccessfulRequests: false
+  skipSuccessfulRequests: false,
+  // Disable x-forwarded-for validation when behind proxy
+  validate: { xForwardedForHeader: false }
 });
 
 // Rate limiter for general API - 100 requests per minute
@@ -48,7 +50,8 @@ export const apiLimiter = rateLimit({
   max: 100, // 100 requests per minute per IP
   message: { error: 'Too many requests. Please slow down.' },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false }
 });
 
 // Stricter rate limiter for sensitive operations
@@ -57,5 +60,6 @@ export const strictLimiter = rateLimit({
   max: 10, // Only 10 requests per minute for sensitive operations
   message: { error: 'Rate limit exceeded. Please try again later.' },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false }
 });
